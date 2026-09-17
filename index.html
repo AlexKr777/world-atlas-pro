@@ -1,0 +1,2020 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Fullscreen интерактивная карта мира с drag/zoom, поиском, фильтрами и popup."
+    />
+    <title>World Atlas Pro</title>
+    <link rel="icon" href="./assets/cuh-logo.jpg" type="image/jpeg" />
+    <link rel="alternate icon" href="./assets/world.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/cuh-logo.jpg" />
+
+    <link rel="dns-prefetch" href="//a.basemaps.cartocdn.com" />
+    <link rel="dns-prefetch" href="//b.basemaps.cartocdn.com" />
+    <link rel="dns-prefetch" href="//c.basemaps.cartocdn.com" />
+    <link rel="dns-prefetch" href="//d.basemaps.cartocdn.com" />
+    <link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin />
+    <link rel="dns-prefetch" href="//unpkg.com" />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="dns-prefetch" href="//esm.sh" />
+    <link rel="preconnect" href="https://esm.sh" crossorigin />
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="//ruhgizowwafhyvtyrcuc.supabase.co" />
+    <link rel="preconnect" href="https://ruhgizowwafhyvtyrcuc.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="//upload.wikimedia.org" />
+    <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin />
+    <link rel="dns-prefetch" href="//images.unsplash.com" />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preload" as="image" href="./assets/world.svg" type="image/svg+xml" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260416d" />
+    <link rel="stylesheet" href="./auth.css?v=20260214d" />
+  </head>
+  <body>
+    <a href="#sidebar-panel" class="skip-link">Перейти к списку точек</a>
+
+    <div class="app-shell" id="app-shell">
+      <header id="top-toolbar" class="top-toolbar">
+        <div class="top-toolbar__brand">
+          <h1 class="top-toolbar__title">World Atlas Pro</h1>
+          <p class="top-toolbar__subtitle">
+            Интерактивная карта с точками и маршрутами
+          </p>
+        </div>
+
+        <div class="top-toolbar__actions">
+          <button
+            id="auth-toggle"
+            type="button"
+            class="app-btn app-btn--ghost"
+            aria-label="Открыть авторизацию"
+            aria-expanded="false"
+            aria-controls="auth-panel"
+          >
+            <span id="auth-toggle-label">Sign in</span>
+            <span id="auth-user-badge" class="badge" hidden>•</span>
+          </button>
+          <button
+            id="admin-toggle"
+            type="button"
+            class="app-btn app-btn--ghost admin-trigger"
+            aria-label="Open admin panel"
+            aria-expanded="false"
+            aria-controls="admin-drawer"
+          >
+            <span class="admin-trigger__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true">
+                <path
+                  d="M12 3L5 6v5c0 5.1 3.6 9.9 7 11 3.4-1.1 7-5.9 7-11V6l-7-3Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M9.5 11.9l1.7 1.7 3.3-3.4"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="admin-trigger__label">Admin</span>
+          </button>
+          <button
+            id="near-me-toggle"
+            type="button"
+            class="app-btn app-btn--ghost near-me-trigger"
+            aria-label="Показать ближайшие места рядом с вашей геопозицией"
+            aria-expanded="false"
+            aria-controls="near-me-panel"
+            title="Near Me"
+          >
+            <span class="near-me-trigger__icon" aria-hidden="true">⌖</span>
+          </button>
+          <div
+            id="add-place-controls"
+            class="add-place-segmented is-admin-hidden"
+            role="group"
+            aria-label="Add place actions"
+          >
+            <button
+              id="add-place-public-toggle"
+              type="button"
+              class="app-btn app-btn--ghost add-place-segmented__btn"
+              aria-label="Add Public Place"
+              aria-expanded="false"
+              aria-controls="add-place-drawer"
+              hidden
+            >
+              Add Public Place
+            </button>
+            <button
+              id="add-place-my-toggle"
+              type="button"
+              class="app-btn app-btn--ghost add-place-segmented__btn"
+              aria-label="Add My Place"
+              aria-expanded="false"
+              aria-controls="add-place-drawer"
+            >
+              Add My Place
+            </button>
+          </div>
+          <button
+            id="sidebar-toggle"
+            type="button"
+            class="app-btn app-btn--ghost"
+            aria-label="Скрыть маркеры точек на карте"
+            aria-pressed="false"
+          >
+            <span class="app-btn__label" data-label="Скрыть точки">Скрыть точки</span>
+          </button>
+          <button
+            id="fit-points"
+            type="button"
+            class="app-btn app-btn--ghost"
+            aria-label="Показать все точки"
+          >
+            Все точки
+          </button>
+          <button
+            id="reset-view"
+            type="button"
+            class="app-btn app-btn--primary"
+            aria-label="Сбросить вид карты"
+          >
+            Сбросить вид
+          </button>
+        </div>
+      </header>
+
+      <section id="auth-panel" class="glass-card auth-panel" hidden aria-live="polite">
+        <header class="auth-panel__header">
+          <h2 class="auth-panel__title">Аккаунт</h2>
+          <button
+            id="auth-close"
+            type="button"
+            class="icon-btn auth-panel__close"
+            aria-label="Закрыть панель авторизации"
+          >
+            ✕
+          </button>
+        </header>
+
+        <p id="auth-user-line" class="auth-panel__user-line">Not authenticated</p>
+        <p id="auth-message" class="auth-panel__message" hidden></p>
+
+        <form id="auth-form" class="auth-panel__form" novalidate>
+          <label id="auth-email-label" class="field-label" for="auth-email">Email</label>
+          <input
+            id="auth-email"
+            class="glass-input"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            required
+          />
+
+          <label id="auth-password-label" class="field-label" for="auth-password">Password</label>
+          <input
+            id="auth-password"
+            class="glass-input"
+            type="password"
+            autocomplete="current-password"
+            placeholder="At least 6 characters"
+            minlength="6"
+            required
+          />
+
+          <div class="auth-panel__actions">
+            <button id="auth-sign-in" type="button" class="glass-btn glass-btn-primary">
+              Sign in
+            </button>
+            <button id="auth-sign-up" type="button" class="glass-btn">
+              Sign up
+            </button>
+          </div>
+
+          <button
+            id="auth-resend-confirmation"
+            type="button"
+            class="glass-btn auth-panel__resend"
+            hidden
+          >
+            Resend confirmation
+          </button>
+
+          <button id="auth-sign-out" type="button" class="glass-btn auth-panel__logout" hidden>
+            Logout
+          </button>
+        </form>
+      </section>
+
+      <section
+        id="add-place-banner"
+        class="add-place-banner"
+        aria-live="polite"
+        hidden
+      >
+        <p id="add-place-banner-text" class="add-place-banner__text">
+          Click on map to place marker
+        </p>
+        <button
+          id="add-place-banner-cancel"
+          type="button"
+          class="app-btn app-btn--ghost add-place-banner__cancel"
+          aria-label="Отменить режим выбора точки на карте"
+        >
+          Cancel
+        </button>
+      </section>
+
+      <section
+        id="near-me-panel"
+        class="near-me-panel"
+        aria-label="Ближайшие места"
+        aria-live="polite"
+        hidden
+      >
+        <header class="near-me-panel__header">
+          <div class="near-me-panel__heading">
+            <h2 class="near-me-panel__title">Near Me</h2>
+            <p class="near-me-panel__subtitle">Ближайшие точки от вашей геопозиции</p>
+          </div>
+          <button
+            id="near-me-close"
+            type="button"
+            class="icon-btn near-me-panel__close"
+            aria-label="Закрыть панель ближайших мест"
+          >
+            ✕
+          </button>
+        </header>
+
+        <p id="near-me-status" class="near-me-panel__status">
+          Нажмите кнопку Near Me, чтобы определить геопозицию.
+        </p>
+        <p id="near-me-coords" class="near-me-panel__coords" hidden></p>
+
+        <ul id="near-me-list" class="near-me-panel__list" aria-label="Список ближайших мест"></ul>
+      </section>
+
+      <aside
+        id="add-place-drawer"
+        class="add-place-drawer"
+        aria-label="Форма добавления точки"
+        aria-live="polite"
+        hidden
+      >
+        <header class="add-place-drawer__header">
+          <div class="add-place-drawer__heading">
+            <div class="add-place-drawer__title-row">
+              <h2 class="add-place-drawer__title">Add Place</h2>
+              <span id="add-place-mode-badge" class="add-place-drawer__mode-badge">MY</span>
+            </div>
+            <p id="add-place-coords" class="add-place-drawer__coords">Coordinates: -</p>
+          </div>
+          <button
+            id="add-place-close"
+            type="button"
+            class="icon-btn add-place-drawer__close"
+            aria-label="Закрыть форму добавления точки"
+          >
+            ✕
+          </button>
+        </header>
+
+        <p id="add-place-status" class="add-place-drawer__status" hidden></p>
+
+        <form id="add-place-form" class="add-place-form" novalidate>
+          <label class="field-label" for="add-place-name">Title</label>
+          <input
+            id="add-place-name"
+            class="text-input"
+            type="text"
+            autocomplete="off"
+            maxlength="120"
+            placeholder="Place title"
+            required
+          />
+
+          <label class="field-label" for="add-place-description">Description</label>
+          <textarea
+            id="add-place-description"
+            class="text-input add-place-form__textarea"
+            rows="3"
+            maxlength="560"
+            placeholder="Optional description"
+          ></textarea>
+
+          <label class="field-label" for="add-place-photo">Photo</label>
+          <div class="add-place-form__photo-row">
+            <input
+              id="add-place-photo"
+              class="add-place-form__photo-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              disabled
+              aria-label="Загрузить фото точки"
+            />
+            <button
+              id="add-place-photo-clear"
+              type="button"
+              class="app-btn app-btn--ghost add-place-form__photo-clear"
+              hidden
+            >
+              Remove
+            </button>
+          </div>
+          <p
+            id="add-place-photo-auth-hint"
+            class="add-place-form__photo-hint"
+          >
+            Please log in to upload an image from your device.
+          </p>
+          <div id="add-place-photo-preview" class="add-place-form__photo-preview" hidden>
+            <img
+              id="add-place-photo-preview-image"
+              class="add-place-form__photo-image"
+              alt=""
+              width="72"
+              height="54"
+              loading="lazy"
+              decoding="async"
+            />
+            <p id="add-place-photo-meta" class="add-place-form__photo-meta"></p>
+          </div>
+
+          <label class="field-label" for="add-place-category">Category</label>
+          <select id="add-place-category" class="select-input" aria-label="Категория точки">
+            <option value="city">City</option>
+            <option value="nature">Nature</option>
+            <option value="culture">Culture</option>
+            <option value="landmark">Landmark</option>
+            <option value="food">Food</option>
+          </select>
+
+          <label class="field-label" for="add-place-tag-input">Tags</label>
+          <div class="add-place-form__tags-row">
+            <input
+              id="add-place-tag-input"
+              class="text-input add-place-form__tag-input"
+              type="text"
+              autocomplete="off"
+              maxlength="32"
+              placeholder="Type a tag and press Add"
+            />
+            <button
+              id="add-place-tag-add"
+              type="button"
+              class="app-btn app-btn--ghost add-place-form__tag-add"
+              aria-label="Добавить тег"
+            >
+              Add
+            </button>
+          </div>
+          <div
+            id="add-place-tags"
+            class="add-place-form__tags"
+            aria-label="Список выбранных тегов"
+          ></div>
+
+          <div class="add-place-form__grid">
+            <div class="add-place-form__field">
+              <label class="field-label" for="add-place-price">Price level</label>
+              <select id="add-place-price" class="select-input" aria-label="Уровень цены">
+                <option value="1">$</option>
+                <option value="2">$$</option>
+                <option value="3">$$$</option>
+                <option value="4">$$$$</option>
+              </select>
+            </div>
+            <label class="add-place-form__family">
+              <input
+                id="add-place-free"
+                class="add-place-form__family-input"
+                type="checkbox"
+              />
+              <span class="add-place-form__family-label">Only free</span>
+            </label>
+            <label class="add-place-form__family">
+              <input
+                id="add-place-family"
+                class="add-place-form__family-input"
+                type="checkbox"
+              />
+              <span class="add-place-form__family-label">Family friendly</span>
+            </label>
+          </div>
+
+          <div id="add-place-visibility" class="add-place-form__visibility">
+            <p class="field-label add-place-form__visibility-label">Visibility</p>
+            <div class="add-place-form__segmented" role="group" aria-label="Place visibility">
+              <button
+                id="add-place-visibility-private"
+                type="button"
+                class="add-place-form__segment"
+                data-visibility="private"
+                aria-pressed="false"
+              >
+                Private
+              </button>
+              <button
+                id="add-place-visibility-public"
+                type="button"
+                class="add-place-form__segment is-active"
+                data-visibility="public"
+                aria-pressed="true"
+              >
+                Public
+              </button>
+              <button
+                id="add-place-visibility-review"
+                type="button"
+                class="add-place-form__segment"
+                data-visibility="pending"
+                aria-pressed="false"
+              >
+                Submit for review
+              </button>
+            </div>
+          </div>
+
+          <div id="add-place-schedule" class="add-place-form__schedule" hidden>
+            <label class="add-place-form__family add-place-form__family--schedule">
+              <input
+                id="add-place-schedule-enabled"
+                class="add-place-form__family-input"
+                type="checkbox"
+              />
+              <span class="add-place-form__family-label">Scheduled publish</span>
+            </label>
+            <div class="add-place-form__schedule-grid">
+              <div class="add-place-form__field">
+                <label class="field-label" for="add-place-schedule-at">Publish at</label>
+                <input
+                  id="add-place-schedule-at"
+                  class="text-input"
+                  type="datetime-local"
+                  autocomplete="off"
+                  disabled
+                />
+              </div>
+              <p id="add-place-schedule-hint" class="add-place-form__schedule-hint">
+                For public points you can request a future publish time. User submissions keep this schedule after approval.
+              </p>
+            </div>
+          </div>
+
+          <section id="add-place-seasonal" class="add-place-form__seasonal" hidden>
+            <label class="add-place-form__family add-place-form__family--seasonal">
+              <input
+                id="add-place-seasonal-enabled"
+                class="add-place-form__family-input"
+                type="checkbox"
+              />
+              <span class="add-place-form__family-label">Seasonal point</span>
+            </label>
+            <p id="add-place-seasonal-hint" class="add-place-form__schedule-hint">
+              Turn one public point into spring, summer, autumn, and winter variants. Each active season can have its own title, photo, and description.
+            </p>
+            <div id="add-place-seasonal-cards" class="add-place-form__seasonal-cards" hidden>
+              <section class="add-place-season-card" data-season="spring" data-active="false">
+                <div class="add-place-season-card__header">
+                  <div>
+                    <h3 class="add-place-season-card__title">Spring</h3>
+                    <p class="add-place-season-card__meta">March to May</p>
+                  </div>
+                  <label class="add-place-season-card__toggle">
+                    <input
+                      class="add-place-season-card__toggle-input"
+                      type="checkbox"
+                      data-season-enabled="spring"
+                    />
+                    <span class="add-place-season-card__toggle-label">Active</span>
+                  </label>
+                </div>
+                <div class="add-place-season-card__body">
+                  <label class="field-label" for="add-place-season-title-spring">Season title</label>
+                  <input
+                    id="add-place-season-title-spring"
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    maxlength="120"
+                    placeholder="Optional spring title"
+                    data-season-title="spring"
+                  />
+                  <label class="field-label" for="add-place-season-description-spring">Season description</label>
+                  <textarea
+                    id="add-place-season-description-spring"
+                    class="text-input add-place-form__textarea add-place-season-card__textarea"
+                    rows="3"
+                    maxlength="560"
+                    placeholder="Optional spring details"
+                    data-season-description="spring"
+                  ></textarea>
+                  <label class="field-label" for="add-place-season-photo-spring">Season photo</label>
+                  <div class="add-place-form__photo-row">
+                    <input
+                      id="add-place-season-photo-spring"
+                      class="add-place-form__photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
+                      disabled
+                      data-season-photo="spring"
+                    />
+                    <button
+                      type="button"
+                      class="app-btn app-btn--ghost add-place-form__photo-clear"
+                      data-season-photo-clear="spring"
+                      hidden
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div class="add-place-form__photo-preview" data-season-photo-preview="spring" hidden>
+                    <img
+                      class="add-place-form__photo-image"
+                      alt=""
+                      width="72"
+                      height="54"
+                      data-season-photo-image="spring"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p class="add-place-form__photo-meta" data-season-photo-meta="spring"></p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="add-place-season-card" data-season="summer" data-active="false">
+                <div class="add-place-season-card__header">
+                  <div>
+                    <h3 class="add-place-season-card__title">Summer</h3>
+                    <p class="add-place-season-card__meta">June to August</p>
+                  </div>
+                  <label class="add-place-season-card__toggle">
+                    <input
+                      class="add-place-season-card__toggle-input"
+                      type="checkbox"
+                      data-season-enabled="summer"
+                    />
+                    <span class="add-place-season-card__toggle-label">Active</span>
+                  </label>
+                </div>
+                <div class="add-place-season-card__body">
+                  <label class="field-label" for="add-place-season-title-summer">Season title</label>
+                  <input
+                    id="add-place-season-title-summer"
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    maxlength="120"
+                    placeholder="Optional summer title"
+                    data-season-title="summer"
+                  />
+                  <label class="field-label" for="add-place-season-description-summer">Season description</label>
+                  <textarea
+                    id="add-place-season-description-summer"
+                    class="text-input add-place-form__textarea add-place-season-card__textarea"
+                    rows="3"
+                    maxlength="560"
+                    placeholder="Optional summer details"
+                    data-season-description="summer"
+                  ></textarea>
+                  <label class="field-label" for="add-place-season-photo-summer">Season photo</label>
+                  <div class="add-place-form__photo-row">
+                    <input
+                      id="add-place-season-photo-summer"
+                      class="add-place-form__photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
+                      disabled
+                      data-season-photo="summer"
+                    />
+                    <button
+                      type="button"
+                      class="app-btn app-btn--ghost add-place-form__photo-clear"
+                      data-season-photo-clear="summer"
+                      hidden
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div class="add-place-form__photo-preview" data-season-photo-preview="summer" hidden>
+                    <img
+                      class="add-place-form__photo-image"
+                      alt=""
+                      width="72"
+                      height="54"
+                      data-season-photo-image="summer"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p class="add-place-form__photo-meta" data-season-photo-meta="summer"></p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="add-place-season-card" data-season="autumn" data-active="false">
+                <div class="add-place-season-card__header">
+                  <div>
+                    <h3 class="add-place-season-card__title">Autumn</h3>
+                    <p class="add-place-season-card__meta">September to November</p>
+                  </div>
+                  <label class="add-place-season-card__toggle">
+                    <input
+                      class="add-place-season-card__toggle-input"
+                      type="checkbox"
+                      data-season-enabled="autumn"
+                    />
+                    <span class="add-place-season-card__toggle-label">Active</span>
+                  </label>
+                </div>
+                <div class="add-place-season-card__body">
+                  <label class="field-label" for="add-place-season-title-autumn">Season title</label>
+                  <input
+                    id="add-place-season-title-autumn"
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    maxlength="120"
+                    placeholder="Optional autumn title"
+                    data-season-title="autumn"
+                  />
+                  <label class="field-label" for="add-place-season-description-autumn">Season description</label>
+                  <textarea
+                    id="add-place-season-description-autumn"
+                    class="text-input add-place-form__textarea add-place-season-card__textarea"
+                    rows="3"
+                    maxlength="560"
+                    placeholder="Optional autumn details"
+                    data-season-description="autumn"
+                  ></textarea>
+                  <label class="field-label" for="add-place-season-photo-autumn">Season photo</label>
+                  <div class="add-place-form__photo-row">
+                    <input
+                      id="add-place-season-photo-autumn"
+                      class="add-place-form__photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
+                      disabled
+                      data-season-photo="autumn"
+                    />
+                    <button
+                      type="button"
+                      class="app-btn app-btn--ghost add-place-form__photo-clear"
+                      data-season-photo-clear="autumn"
+                      hidden
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div class="add-place-form__photo-preview" data-season-photo-preview="autumn" hidden>
+                    <img
+                      class="add-place-form__photo-image"
+                      alt=""
+                      width="72"
+                      height="54"
+                      data-season-photo-image="autumn"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p class="add-place-form__photo-meta" data-season-photo-meta="autumn"></p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="add-place-season-card" data-season="winter" data-active="false">
+                <div class="add-place-season-card__header">
+                  <div>
+                    <h3 class="add-place-season-card__title">Winter</h3>
+                    <p class="add-place-season-card__meta">December to February</p>
+                  </div>
+                  <label class="add-place-season-card__toggle">
+                    <input
+                      class="add-place-season-card__toggle-input"
+                      type="checkbox"
+                      data-season-enabled="winter"
+                    />
+                    <span class="add-place-season-card__toggle-label">Active</span>
+                  </label>
+                </div>
+                <div class="add-place-season-card__body">
+                  <label class="field-label" for="add-place-season-title-winter">Season title</label>
+                  <input
+                    id="add-place-season-title-winter"
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    maxlength="120"
+                    placeholder="Optional winter title"
+                    data-season-title="winter"
+                  />
+                  <label class="field-label" for="add-place-season-description-winter">Season description</label>
+                  <textarea
+                    id="add-place-season-description-winter"
+                    class="text-input add-place-form__textarea add-place-season-card__textarea"
+                    rows="3"
+                    maxlength="560"
+                    placeholder="Optional winter details"
+                    data-season-description="winter"
+                  ></textarea>
+                  <label class="field-label" for="add-place-season-photo-winter">Season photo</label>
+                  <div class="add-place-form__photo-row">
+                    <input
+                      id="add-place-season-photo-winter"
+                      class="add-place-form__photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif"
+                      disabled
+                      data-season-photo="winter"
+                    />
+                    <button
+                      type="button"
+                      class="app-btn app-btn--ghost add-place-form__photo-clear"
+                      data-season-photo-clear="winter"
+                      hidden
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div class="add-place-form__photo-preview" data-season-photo-preview="winter" hidden>
+                    <img
+                      class="add-place-form__photo-image"
+                      alt=""
+                      width="72"
+                      height="54"
+                      data-season-photo-image="winter"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p class="add-place-form__photo-meta" data-season-photo-meta="winter"></p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <footer class="add-place-form__actions">
+            <button
+              id="add-place-submit"
+              type="submit"
+              class="app-btn app-btn--primary"
+              aria-label="Сохранить новую точку"
+            >
+              Save place
+            </button>
+            <button
+              id="add-place-cancel"
+              type="button"
+              class="app-btn app-btn--ghost"
+              aria-label="Отменить добавление точки"
+            >
+              Cancel
+            </button>
+          </footer>
+        </form>
+      </aside>
+
+      <p id="app-status" class="app-status" role="status" aria-live="polite"></p>
+      <p id="app-toast" class="app-toast" role="status" aria-live="polite" hidden></p>
+
+      <aside id="travel-hub" class="travel-hub" aria-label="Travel hub">
+        <header class="travel-hub__header">
+          <div class="travel-hub__heading">
+            <h2 id="travel-hub-title" class="travel-hub__title">Travel Catalog</h2>
+            <p id="travel-hub-subtitle" class="travel-hub__subtitle">
+              Каталог и обзор точек
+            </p>
+          </div>
+          <button
+            id="travel-hub-toggle"
+            type="button"
+            class="icon-btn travel-hub__toggle"
+            aria-label="Свернуть travel hub"
+            aria-expanded="true"
+          >
+            –
+          </button>
+        </header>
+
+        <div id="travel-mode-switch" class="travel-mode-switch" role="tablist" aria-label="Режим travel hub">
+          <button
+            type="button"
+            class="travel-mode-switch__btn is-active"
+            role="tab"
+            aria-selected="true"
+            data-mode="catalog"
+          >
+            Catalog
+          </button>
+          <button
+            type="button"
+            class="travel-mode-switch__btn"
+            role="tab"
+            aria-selected="false"
+            data-mode="guide"
+          >
+            Guide
+          </button>
+        </div>
+
+        <ul id="travel-hub-metrics" class="travel-hub__metrics" aria-live="polite"></ul>
+      </aside>
+
+      <aside id="sidebar-panel" class="sidebar" aria-label="Панель точек">
+        <div class="sidebar__header">
+          <span
+            class="panel-drag-handle"
+            data-sidebar-drag-handle="panel"
+            aria-hidden="true"
+            title="Переместить панель"
+          ></span>
+          <div class="sidebar__header-main">
+            <h2 class="sidebar__title">Точки на карте</h2>
+            <button
+              id="sidebar-close"
+              type="button"
+              class="icon-btn"
+              aria-label="Закрыть панель"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar__filters">
+          <span
+            class="section-handle"
+            data-sidebar-drag-handle="filters"
+            aria-hidden="true"
+            title="Переместить панель"
+          ></span>
+          <label class="field-label" for="search-input">Поиск</label>
+          <input
+            id="search-input"
+            class="text-input"
+            type="search"
+            placeholder="Название, регион, описание"
+            autocomplete="off"
+          />
+
+          <label class="field-label" for="region-filter">Регион</label>
+          <select id="region-filter" class="select-input" aria-label="Фильтр по региону">
+            <option value="all">Все регионы</option>
+          </select>
+
+          <button
+            id="smart-filters-open"
+            type="button"
+            class="app-btn app-btn--ghost app-btn--full"
+            aria-label="Открыть расширенные фильтры"
+            aria-expanded="false"
+            aria-controls="smart-filters-panel"
+          >
+            Умные фильтры
+          </button>
+
+          <div class="sidebar__meta" aria-live="polite">
+            <p class="meta-item">
+              Всего: <strong id="points-total">0</strong>
+            </p>
+            <p class="meta-item">
+              Отфильтровано: <strong id="points-visible">0</strong>
+            </p>
+          </div>
+
+          <button
+            id="favorites-filter"
+            type="button"
+            class="app-btn app-btn--ghost app-btn--full favorites-filter"
+            aria-pressed="false"
+            aria-label="Показывать только избранные точки"
+          >
+            ☆ Только избранное
+          </button>
+
+          <button
+            id="clear-filters"
+            type="button"
+            class="app-btn app-btn--ghost app-btn--full"
+            aria-label="Сбросить поиск и фильтр"
+          >
+            Очистить фильтры
+          </button>
+        </div>
+
+        <section id="route-panel-root" class="route-panel" aria-labelledby="route-panel-title">
+          <div class="route-panel__header">
+            <span
+              class="section-handle"
+              data-sidebar-drag-handle="route"
+              aria-hidden="true"
+              title="Переместить панель"
+            ></span>
+            <h3 id="route-panel-title" class="route-panel__title">Маршрут</h3>
+            <p class="route-panel__subtitle">
+              Выберите минимум две точки из списка или свои координаты. Можно добавлять
+              промежуточные точки и менять порядок перетаскиванием. Для своих координат
+              следующий клик по карте подставит точку автоматически.
+            </p>
+          </div>
+
+          <div class="route-panel__mode-row">
+            <div class="route-panel__mode-field">
+              <label class="field-label" for="route-mode">Тип маршрута</label>
+              <select
+                id="route-mode"
+                class="select-input route-panel__select route-panel__mode-select"
+                aria-label="Тип маршрута"
+              >
+                <option value="car">Авто</option>
+                <option value="walk">Пешком</option>
+                <option value="flight">Самолёт</option>
+              </select>
+            </div>
+            <button
+              id="route-add-waypoint"
+              type="button"
+              class="app-btn app-btn--ghost route-panel__add-waypoint"
+              aria-label="Добавить промежуточную точку маршрута"
+            >
+              + Добавить точку C
+            </button>
+          </div>
+
+          <div class="route-panel__group">
+            <label class="field-label" for="route-start-place">Точка A</label>
+            <select
+              id="route-start-place"
+              class="select-input route-panel__select"
+              aria-label="Начальная точка маршрута"
+            >
+              <option value="">Выберите точку</option>
+              <option value="__custom__">Свои координаты</option>
+            </select>
+            <div class="route-panel__quick-actions">
+              <button
+                id="route-start-pick"
+                type="button"
+                class="app-btn app-btn--ghost route-panel__pick-btn"
+                aria-label="Выбрать точку A кликом по карте"
+                aria-pressed="false"
+              >
+                Pick on map
+              </button>
+              <button
+                id="route-start-my-location"
+                type="button"
+                class="app-btn app-btn--ghost route-panel__my-location-btn"
+                aria-label="Установить точку A от моего местоположения"
+              >
+                От моего местоположения
+              </button>
+            </div>
+
+            <div id="route-start-custom" class="route-panel__custom" hidden>
+              <div class="route-panel__coords">
+                <input
+                  id="route-start-lat"
+                  class="text-input route-panel__coord-input"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="Широта (-90..90)"
+                  aria-label="Начальная широта"
+                />
+                <input
+                  id="route-start-lon"
+                  class="text-input route-panel__coord-input"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="Долгота (-180..180)"
+                  aria-label="Начальная долгота"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="route-panel__group">
+            <label class="field-label" for="route-end-place">Точка B</label>
+            <select
+              id="route-end-place"
+              class="select-input route-panel__select"
+              aria-label="Конечная точка маршрута"
+            >
+              <option value="">Выберите точку</option>
+              <option value="__custom__">Свои координаты</option>
+            </select>
+            <div class="route-panel__quick-actions route-panel__quick-actions--single">
+              <button
+                id="route-end-pick"
+                type="button"
+                class="app-btn app-btn--ghost route-panel__pick-btn"
+                aria-label="Выбрать точку B кликом по карте"
+                aria-pressed="false"
+              >
+                Pick on map
+              </button>
+            </div>
+
+            <div id="route-end-custom" class="route-panel__custom" hidden>
+              <div class="route-panel__coords">
+                <input
+                  id="route-end-lat"
+                  class="text-input route-panel__coord-input"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="Широта (-90..90)"
+                  aria-label="Конечная широта"
+                />
+                <input
+                  id="route-end-lon"
+                  class="text-input route-panel__coord-input"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="Долгота (-180..180)"
+                  aria-label="Конечная долгота"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="route-extra-points"
+            class="route-panel__extra-points"
+            aria-label="Дополнительные точки маршрута"
+          ></div>
+
+          <section class="route-panel__order" aria-labelledby="route-order-title">
+            <h4 id="route-order-title" class="route-panel__order-title">Порядок точек</h4>
+            <ol id="route-order-list" class="route-panel__order-list" aria-live="polite"></ol>
+            <p class="route-panel__order-hint">Перетаскивайте точки, чтобы изменить порядок.</p>
+          </section>
+
+          <div class="route-panel__actions">
+            <button
+              id="route-build"
+              type="button"
+              class="app-btn app-btn--primary"
+              aria-label="Построить маршрут между двумя точками"
+            >
+              Построить
+            </button>
+            <button
+              id="route-clear"
+              type="button"
+              class="app-btn app-btn--ghost"
+              aria-label="Очистить текущий маршрут"
+            >
+              Очистить
+            </button>
+          </div>
+
+          <p id="route-inline-status" class="route-panel__status" role="status" aria-live="polite">
+            <span id="route-inline-status-spinner" class="route-panel__status-spinner" hidden></span>
+            <span id="route-inline-status-text"></span>
+          </p>
+
+          <div class="route-panel__metrics" aria-live="polite">
+            <p class="route-metric">
+              Дистанция: <strong id="route-distance">—</strong>
+            </p>
+            <p class="route-metric">
+              Время: <strong id="route-duration">—</strong>
+            </p>
+            <p class="route-metric">
+              Тип: <strong id="route-type">—</strong>
+            </p>
+            <p class="route-metric">
+              Источник: <strong id="route-provider">—</strong>
+            </p>
+          </div>
+
+          <section class="route-panel__segments-wrap" aria-labelledby="route-segments-title">
+            <h4 id="route-segments-title" class="route-panel__segments-title">Сегменты</h4>
+            <ol id="route-segments" class="route-panel__segments"></ol>
+          </section>
+        </section>
+
+        <div class="sidebar__list-wrap">
+          <p id="list-empty" class="sidebar__empty" hidden>
+            <span class="sidebar__empty-icon" aria-hidden="true">⌕</span>
+            <strong class="sidebar__empty-title">No places found</strong>
+            <span class="sidebar__empty-text">
+              Попробуйте ослабить фильтры, выбрать другую категорию или убрать часть тегов.
+            </span>
+          </p>
+          <ul id="points-list" class="points-list" aria-label="Список точек"></ul>
+        </div>
+      </aside>
+
+      <div id="smart-filters-backdrop" class="smart-filters-backdrop" hidden></div>
+      <aside
+        id="smart-filters-panel"
+        class="smart-filters-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="smart-filters-title"
+        hidden
+      >
+        <header class="smart-filters__header">
+          <div>
+            <h3 id="smart-filters-title" class="smart-filters__title">Умные фильтры</h3>
+            <p class="smart-filters__subtitle">Категории, теги и расширенная сортировка</p>
+          </div>
+          <button
+            id="smart-filters-close"
+            type="button"
+            class="icon-btn"
+            aria-label="Закрыть панель умных фильтров"
+          >
+            ✕
+          </button>
+        </header>
+
+        <div class="smart-filters__body">
+          <label class="field-label" for="smart-category-filter">Category</label>
+          <select
+            id="smart-category-filter"
+            class="select-input smart-filters__select"
+            aria-label="Фильтр по категории"
+          >
+            <option value="all">All categories</option>
+            <option value="city">Город</option>
+            <option value="nature">Природа</option>
+            <option value="culture">Культура</option>
+          </select>
+
+          <label class="field-label" for="smart-tag-input">Tags</label>
+          <div class="smart-tags-input-row">
+            <input
+              id="smart-tag-input"
+              class="text-input smart-tags-input"
+              type="text"
+              autocomplete="off"
+              placeholder="Например: beach, finance, museums"
+            />
+            <button
+              id="smart-tag-add"
+              type="button"
+              class="app-btn app-btn--ghost smart-tag-add"
+              aria-label="Добавить тег в фильтр"
+            >
+              + Tag
+            </button>
+          </div>
+          <div id="smart-tags-chips" class="smart-tags-chips" aria-live="polite"></div>
+
+          <div class="smart-switches">
+            <button
+              id="smart-only-free"
+              type="button"
+              class="smart-switch"
+              aria-pressed="false"
+            >
+              <span class="smart-switch__text">Only free</span>
+              <span class="smart-switch__track" aria-hidden="true">
+                <span class="smart-switch__thumb"></span>
+              </span>
+            </button>
+            <button
+              id="smart-family-friendly"
+              type="button"
+              class="smart-switch"
+              aria-pressed="false"
+            >
+              <span class="smart-switch__text">Family friendly</span>
+              <span class="smart-switch__track" aria-hidden="true">
+                <span class="smart-switch__thumb"></span>
+              </span>
+            </button>
+          </div>
+
+          <label class="field-label" for="smart-sort-filter">Sort</label>
+          <select
+            id="smart-sort-filter"
+            class="select-input smart-filters__select"
+            aria-label="Сортировка точек"
+          >
+            <option value="name-asc">A-Z</option>
+            <option value="name-desc">Z-A</option>
+            <option value="updated-desc">Сначала новые</option>
+            <option value="population-desc">По населению</option>
+            <option value="region-asc">По региону</option>
+          </select>
+        </div>
+
+        <footer class="smart-filters__actions">
+          <button
+            id="smart-filters-apply"
+            type="button"
+            class="app-btn app-btn--primary"
+            aria-label="Применить умные фильтры"
+          >
+            Apply
+          </button>
+          <button
+            id="smart-filters-reset"
+            type="button"
+            class="app-btn app-btn--ghost"
+            aria-label="Сбросить умные фильтры"
+          >
+            Reset
+          </button>
+        </footer>
+      </aside>
+
+      <div id="admin-backdrop" class="admin-backdrop" hidden></div>
+      <aside
+        id="admin-drawer"
+        class="admin-drawer"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="admin-drawer-title"
+        tabindex="-1"
+        hidden
+      >
+        <header class="admin-drawer__header">
+          <div class="admin-drawer__heading">
+            <h3 id="admin-drawer-title" class="admin-drawer__title">Admin Panel</h3>
+            <p class="admin-drawer__subtitle">Moderation and live user controls</p>
+          </div>
+          <button
+            id="admin-drawer-close"
+            type="button"
+            class="icon-btn admin-drawer__close"
+            aria-label="Close admin panel"
+          >
+            ✕
+          </button>
+        </header>
+
+        <div class="admin-drawer__tabs" role="tablist" aria-label="Admin sections">
+          <button
+            id="admin-tab-queue"
+            type="button"
+            class="admin-tabs__btn is-active"
+            role="tab"
+            aria-selected="true"
+            aria-controls="admin-panel-queue"
+          >
+            Queue
+          </button>
+          <button
+            id="admin-tab-reviews"
+            type="button"
+            class="admin-tabs__btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="admin-panel-reviews"
+          >
+            Reviews
+          </button>
+          <button
+            id="admin-tab-online"
+            type="button"
+            class="admin-tabs__btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="admin-panel-online"
+          >
+            Online
+          </button>
+          <button
+            id="admin-tab-ops"
+            type="button"
+            class="admin-tabs__btn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="admin-panel-ops"
+          >
+            Ops
+          </button>
+        </div>
+
+        <div class="admin-drawer__body">
+          <section
+            id="admin-panel-queue"
+            class="admin-tab-panel admin-tab-panel--queue is-active"
+            role="tabpanel"
+            aria-labelledby="admin-tab-queue"
+          >
+            <section class="admin-section admin-section--queue-head">
+              <div class="admin-section__header admin-section__header--tight">
+                <div>
+                  <h4 class="admin-section__title">Point review queue</h4>
+                  <p class="admin-section__subtitle">User public points land here first. Approve, reject, inspect location and keep moderation under control.</p>
+                </div>
+                <button id="admin-queue-refresh" type="button" class="app-btn app-btn--ghost admin-refresh-btn">
+                  <span class="admin-refresh-btn__text">Refresh</span>
+                </button>
+              </div>
+
+              <div class="admin-queue-toolbar">
+                <input
+                  id="admin-queue-search"
+                  class="text-input admin-queue-toolbar__search"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="Search title / creator / country / region"
+                  aria-label="Search point review queue"
+                />
+                <select id="admin-queue-state" class="text-input admin-queue-toolbar__select" aria-label="Review queue state">
+                  <option value="pending">Pending</option>
+                  <option value="all">All states</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+
+              <div id="admin-queue-stats" class="admin-queue-stats" aria-label="Queue and moderation stats">
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">Pending now</span>
+                  <strong id="admin-stat-pending" class="admin-queue-stat__value">0</strong>
+                </article>
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">New today</span>
+                  <strong id="admin-stat-new-today" class="admin-queue-stat__value">0</strong>
+                </article>
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">Approved week</span>
+                  <strong id="admin-stat-approved-week" class="admin-queue-stat__value">0</strong>
+                </article>
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">Reviews day</span>
+                  <strong id="admin-stat-reviews-day" class="admin-queue-stat__value">0</strong>
+                </article>
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">Bans week</span>
+                  <strong id="admin-stat-bans-week" class="admin-queue-stat__value">0</strong>
+                </article>
+                <article class="admin-queue-stat">
+                  <span class="admin-queue-stat__label">Live audience</span>
+                  <strong id="admin-stat-audience-live" class="admin-queue-stat__value">0</strong>
+                </article>
+              </div>
+            </section>
+
+            <section class="admin-section">
+              <div class="admin-section__header">
+                <div>
+                  <h4 class="admin-section__title">Heatmaps</h4>
+                  <p class="admin-section__subtitle">One map shows where content is landing, the other shows where people are currently active.</p>
+                </div>
+              </div>
+              <div class="admin-heatmaps">
+                <article class="admin-heatmap-card">
+                  <div class="admin-heatmap-card__head">
+                    <h5 class="admin-heatmap-card__title">Content heatmap</h5>
+                    <p id="admin-content-heatmap-summary" class="admin-heatmap-card__copy">Fresh public points and submissions by location.</p>
+                  </div>
+                  <div id="admin-content-heatmap" class="admin-geo-map admin-heatmap" role="img" aria-label="Content heatmap"></div>
+                </article>
+                <article class="admin-heatmap-card">
+                  <div class="admin-heatmap-card__head">
+                    <h5 class="admin-heatmap-card__title">Audience heatmap</h5>
+                    <p id="admin-audience-heatmap-summary" class="admin-heatmap-card__copy">Approximate live audience clusters from worker presence pings.</p>
+                  </div>
+                  <div id="admin-audience-heatmap" class="admin-geo-map admin-heatmap" role="img" aria-label="Audience heatmap"></div>
+                </article>
+              </div>
+            </section>
+
+            <section class="admin-section">
+              <div class="admin-section__header">
+                <div>
+                  <h4 class="admin-section__title">Pending points</h4>
+                  <p class="admin-section__subtitle">Review the card, jump to the coordinates, then approve or reject with a clear note for the author.</p>
+                </div>
+              </div>
+              <ul id="admin-submissions-list" class="admin-list admin-submissions-list" aria-label="Point review queue"></ul>
+            </section>
+          </section>
+
+          <section
+            id="admin-panel-reviews"
+            class="admin-tab-panel"
+            role="tabpanel"
+            aria-labelledby="admin-tab-reviews"
+            hidden
+          >
+            <label class="field-label admin-search__label" for="admin-reviews-search">
+              Search
+            </label>
+            <div class="admin-search">
+              <input
+                id="admin-reviews-search"
+                class="text-input admin-search__input"
+                type="search"
+                autocomplete="off"
+                placeholder="Search by email / comment / place"
+                aria-label="Search reviews by email, comment, or place"
+              />
+            </div>
+
+            <ul id="admin-reviews-list" class="admin-list admin-reviews-list" aria-label="Reviews list"></ul>
+          </section>
+
+          <section
+            id="admin-panel-online"
+            class="admin-tab-panel admin-tab-panel--online"
+            role="tabpanel"
+            aria-labelledby="admin-tab-online"
+            hidden
+          >
+            <div class="admin-online-toolbar">
+              <p class="admin-online-count">Online: <strong id="admin-online-count">0</strong></p>
+              <button id="admin-online-refresh" type="button" class="app-btn app-btn--ghost admin-refresh-btn">
+                <span class="admin-refresh-btn__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true">
+                    <path
+                      d="M19 8.4a8 8 0 1 0 1 6.8"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M19 4.8v3.9h-3.9"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="admin-refresh-btn__text">Refresh</span>
+              </button>
+            </div>
+
+            <ul id="admin-online-list" class="admin-list admin-online-list" aria-label="Online users list"></ul>
+          </section>
+
+          <section
+            id="admin-panel-ops"
+            class="admin-tab-panel admin-tab-panel--ops"
+            role="tabpanel"
+            aria-labelledby="admin-tab-ops"
+            hidden
+          >
+            <section class="admin-section admin-section--ops-intro">
+              <div class="admin-section__header">
+                <div>
+                  <h4 class="admin-section__title">Quick moderation</h4>
+                  <p class="admin-section__subtitle">Ops is your control room: quick commands on top, one-person dossier in the middle, geo moderation for points below.</p>
+                </div>
+              </div>
+
+              <div class="admin-command-bar">
+                <div class="admin-command-bar__intro">
+                  <label class="field-label admin-command-bar__label" for="admin-command-input">
+                    Command bar
+                  </label>
+                  <p class="admin-command-bar__copy">
+                    Use one line for fast moderation when you already know the target.
+                  </p>
+                </div>
+                <div class="admin-command-bar__row">
+                  <input
+                    id="admin-command-input"
+                    class="text-input admin-command-bar__input"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="ban user@example.com 24h spam"
+                    aria-label="Admin command bar"
+                  />
+                  <button
+                    id="admin-command-run"
+                    type="button"
+                    class="app-btn app-btn--ghost admin-command-bar__run"
+                  >
+                    Run
+                  </button>
+                </div>
+                <div class="admin-command-bar__presets" role="group" aria-label="Quick command presets">
+                  <button type="button" class="admin-command-bar__preset" data-admin-command-template="dossier {target}">Open dossier</button>
+                  <button type="button" class="admin-command-bar__preset" data-admin-command-template="ban {target} 24h spam">Ban 24h</button>
+                  <button type="button" class="admin-command-bar__preset" data-admin-command-template="unban {target}">Unban</button>
+                  <button type="button" class="admin-command-bar__preset" data-admin-command-template="freeze {target} 24h review">Freeze 24h</button>
+                  <button type="button" class="admin-command-bar__preset" data-admin-command-template="cleanup {target}">Cleanup</button>
+                </div>
+                <p id="admin-command-status" class="admin-command-bar__status" hidden></p>
+                <p class="admin-command-bar__hint">
+                  Commands: ban, unban, freeze, unfreeze, dossier, note, promote, cleanup, delete point, hide.
+                </p>
+              </div>
+            </section>
+
+            <section class="admin-section">
+              <div class="admin-section__header">
+                <div>
+                  <h4 class="admin-section__title">User dossier</h4>
+                  <p class="admin-section__subtitle">Select a user or guest to inspect history and controls.</p>
+                </div>
+              </div>
+              <div id="admin-dossier-card" class="admin-dossier-card">
+                <p class="admin-dossier-card__empty">Choose a person from Online or use the command bar.</p>
+              </div>
+              <div id="admin-note-composer" class="admin-note-composer">
+                <label class="field-label admin-search__label" for="admin-note-input">
+                  Private admin note
+                </label>
+                <textarea
+                  id="admin-note-input"
+                  class="text-input admin-note-composer__input"
+                  rows="3"
+                  maxlength="600"
+                  placeholder="Add a private note about this user or guest..."
+                ></textarea>
+                <div class="admin-note-composer__actions">
+                  <button id="admin-note-save" type="button" class="app-btn app-btn--ghost admin-note-composer__save">
+                    Save note
+                  </button>
+                </div>
+              </div>
+              <ul id="admin-notes-list" class="admin-list admin-notes-list" aria-label="Admin notes list"></ul>
+            </section>
+
+            <section class="admin-section">
+              <div class="admin-section__header admin-section__header--tight">
+                <div>
+                  <h4 class="admin-section__title">Geo moderation</h4>
+                  <p class="admin-section__subtitle">New, suspicious and incomplete points by region and creator.</p>
+                </div>
+                <button id="admin-geo-refresh" type="button" class="app-btn app-btn--ghost admin-refresh-btn">
+                  <span class="admin-refresh-btn__text">Refresh</span>
+                </button>
+              </div>
+
+              <div class="admin-geo-toolbar">
+                <input
+                  id="admin-geo-search"
+                  class="text-input admin-geo-toolbar__search"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="Search place / creator / country / region"
+                  aria-label="Search geo moderation rows"
+                />
+                <select id="admin-geo-source" class="text-input admin-geo-toolbar__select" aria-label="Geo moderation source">
+                  <option value="all">All sources</option>
+                  <option value="public">Public places</option>
+                  <option value="submission">Submission queue</option>
+                  <option value="user">User places</option>
+                </select>
+              </div>
+
+              <div class="admin-filter-chips" role="group" aria-label="Geo moderation filters">
+                <button id="admin-geo-filter-new" type="button" class="admin-filter-chip" aria-pressed="false">New</button>
+                <button id="admin-geo-filter-suspicious" type="button" class="admin-filter-chip" aria-pressed="false">Suspicious</button>
+                <button id="admin-geo-filter-no-photo" type="button" class="admin-filter-chip" aria-pressed="false">No photo</button>
+                <button id="admin-geo-filter-no-description" type="button" class="admin-filter-chip" aria-pressed="false">No description</button>
+              </div>
+
+              <p class="admin-online-count">Geo rows: <strong id="admin-geo-count">0</strong></p>
+              <p id="admin-geo-summary" class="admin-geo-summary">Select a row or dot to see the place context and coordinates.</p>
+              <div class="admin-geo-legend" aria-hidden="true">
+                <span class="admin-geo-legend__item"><span class="admin-geo-legend__dot admin-geo-legend__dot--public"></span> Public point</span>
+                <span class="admin-geo-legend__item"><span class="admin-geo-legend__dot"></span> User point</span>
+                <span class="admin-geo-legend__item"><span class="admin-geo-legend__dot admin-geo-legend__dot--suspicious"></span> Suspicious</span>
+              </div>
+              <div id="admin-geo-map" class="admin-geo-map admin-geo-map--world" role="img" aria-label="Geo moderation preview map"></div>
+              <ul id="admin-geo-list" class="admin-list admin-geo-list" aria-label="Geo moderation list"></ul>
+            </section>
+          </section>
+        </div>
+      </aside>
+
+      <button
+        id="sidebar-reveal"
+        type="button"
+        class="sidebar-reveal"
+        aria-label="Показать боковую панель"
+        hidden
+      >
+        <span class="sidebar-reveal__dot" aria-hidden="true"></span>
+        <span class="sidebar-reveal__label">Панель</span>
+      </button>
+
+      <main class="map-stage" aria-label="Интерактивная карта">
+        <div id="map-root" class="map-root"></div>
+        <aside
+          id="map-zoom-slider"
+          class="map-zoom-slider"
+          aria-label="Плавный зум карты"
+        >
+          <button
+            id="map-zoom-in"
+            class="map-zoom-slider__mark map-zoom-slider__button"
+            type="button"
+            aria-label="Увеличить карту"
+          >
+            +
+          </button>
+          <div class="map-zoom-slider__track">
+            <input
+              id="map-zoom-range"
+              class="map-zoom-slider__range"
+              type="range"
+              min="2"
+              max="18"
+              step="0.05"
+              value="2.2"
+              aria-label="Масштаб карты"
+            />
+          </div>
+          <button
+            id="map-zoom-out"
+            class="map-zoom-slider__mark map-zoom-slider__button"
+            type="button"
+            aria-label="Уменьшить карту"
+          >
+            −
+          </button>
+        </aside>
+      </main>
+    </div>
+
+    <div id="popup-backdrop" class="popup-backdrop" hidden>
+      <section
+        id="popup-card"
+        class="popup-card"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="popup-title"
+        aria-describedby="popup-description"
+        tabindex="-1"
+      >
+        <button
+          id="popup-close"
+          type="button"
+          class="popup-card__close"
+          aria-label="Закрыть карточку точки"
+        >
+          ✕
+        </button>
+
+        <div id="popup-media" class="popup-card__media" hidden>
+          <span
+            id="popup-media-skeleton"
+            class="popup-card__media-skeleton"
+            aria-hidden="true"
+          ></span>
+          <img
+            id="popup-image"
+            class="popup-card__image"
+            src=""
+            alt=""
+            width="1200"
+            height="675"
+            loading="lazy"
+            decoding="async"
+          />
+          <p
+            id="popup-media-error"
+            class="popup-card__media-error"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            Фото не загрузилось
+          </p>
+          <span class="popup-card__media-glow" aria-hidden="true"></span>
+        </div>
+
+        <div id="popup-content" class="popup-card__content">
+          <header class="popup-card__header">
+            <h2 id="popup-title" class="popup-card__title">Точка не выбрана</h2>
+            <p id="popup-country" class="popup-card__country"></p>
+            <p id="popup-region-line" class="popup-card__region-line"></p>
+            <div
+              id="popup-trust-signals"
+              class="popup-card__trust"
+              aria-label="Public trust signals"
+              hidden
+            ></div>
+          </header>
+
+          <p id="popup-description" class="popup-card__description"></p>
+
+          <section
+            id="popup-season-section"
+            class="popup-card__section popup-season"
+            aria-labelledby="popup-season-title"
+            hidden
+          >
+            <div class="popup-season__eyebrow">
+              <h3 id="popup-season-title" class="popup-card__section-title">Seasonal view</h3>
+              <span id="popup-season-status" class="popup-season__status">4 seasons</span>
+            </div>
+            <div
+              id="popup-season-tabs"
+              class="popup-season__tabs"
+              role="tablist"
+              aria-label="Season variants"
+            ></div>
+            <p id="popup-season-copy" class="popup-season__copy">
+              This point changes by season. Switch between active views without leaving the card.
+            </p>
+          </section>
+
+          <section
+            id="popup-weather-section"
+            class="popup-card__section popup-weather"
+            aria-labelledby="popup-weather-title"
+          >
+            <div class="popup-weather__eyebrow">
+              <h3 id="popup-weather-title" class="popup-card__section-title">Live weather</h3>
+              <span id="popup-weather-status" class="popup-weather__status">Live</span>
+            </div>
+            <div class="popup-weather__card">
+                <div class="popup-weather__main">
+                  <span id="popup-weather-icon" class="popup-weather__icon" aria-hidden="true">◌</span>
+                  <div class="popup-weather__copy">
+                    <p id="popup-weather-temp" class="popup-weather__temp">—</p>
+                    <p id="popup-weather-condition" class="popup-weather__condition">
+                      Checking live weather...
+                    </p>
+                    <p id="popup-weather-local" class="popup-weather__local">
+                      Local time is syncing...
+                    </p>
+                  </div>
+                </div>
+                <ul id="popup-weather-meta" class="popup-weather__meta" aria-label="Weather details"></ul>
+              </div>
+              <p id="popup-weather-updated" class="popup-weather__updated">Updating…</p>
+          </section>
+
+          <section class="popup-card__section" aria-labelledby="popup-summary-title">
+            <h3 id="popup-summary-title" class="popup-card__section-title">Коротко</h3>
+            <ul id="popup-summary" class="popup-card__summary"></ul>
+          </section>
+
+          <section class="popup-card__section" aria-labelledby="popup-facts-title">
+            <h3 id="popup-facts-title" class="popup-card__section-title">Факты и теги</h3>
+            <ul id="popup-highlights" class="popup-card__highlights"></ul>
+          </section>
+
+          <p id="popup-fact" class="popup-card__fact" hidden></p>
+          <p id="popup-coordinates" class="popup-card__coordinates"></p>
+
+          <div
+            id="popup-actions"
+            class="popup-card__actions"
+            aria-label="Действия с точкой"
+          >
+            <button
+              id="popup-route-from"
+              type="button"
+              class="app-btn app-btn--primary popup-card__action popup-card__action--route"
+              data-action="route"
+            >
+              Route here
+            </button>
+            <button
+              id="popup-favorite-toggle"
+              type="button"
+              class="app-btn app-btn--ghost popup-card__action popup-card__action--favorite"
+              aria-pressed="false"
+              data-action="save"
+            >
+              Save
+            </button>
+            <button
+              id="popup-share"
+              type="button"
+              class="app-btn app-btn--ghost popup-card__action popup-card__action--share"
+              data-action="share"
+            >
+              Share
+            </button>
+            <button
+              id="popup-delete-place"
+              type="button"
+              class="app-btn app-btn--ghost popup-card__action popup-card__action--delete"
+              data-action="delete"
+              hidden
+            >
+              Delete
+            </button>
+          </div>
+
+          <div
+            id="popup-navigation"
+            class="popup-card__nav"
+            aria-label="Place navigation"
+            hidden
+          >
+            <button
+              id="popup-prev-place"
+              type="button"
+              class="app-btn app-btn--ghost popup-card__nav-btn popup-card__nav-btn--prev"
+            >
+              <span class="popup-card__nav-label">Previous point</span>
+              <span class="popup-card__nav-target"></span>
+            </button>
+            <button
+              id="popup-next-place"
+              type="button"
+              class="app-btn app-btn--ghost popup-card__nav-btn popup-card__nav-btn--next"
+            >
+              <span class="popup-card__nav-label">Next point</span>
+              <span class="popup-card__nav-target"></span>
+            </button>
+          </div>
+
+          <section class="popup-card__section popup-feedback" aria-labelledby="popup-feedback-status-title">
+            <h3 id="popup-feedback-status-title" class="popup-card__section-title">Your status</h3>
+            <div class="popup-feedback__status" role="group" aria-label="Ваш статус для точки">
+              <button
+                id="popup-status-want"
+                type="button"
+                class="app-btn app-btn--ghost popup-feedback__status-btn"
+                aria-pressed="false"
+              >
+                Want
+              </button>
+              <button
+                id="popup-status-visited"
+                type="button"
+                class="app-btn app-btn--ghost popup-feedback__status-btn"
+                aria-pressed="false"
+              >
+                Visited
+              </button>
+            </div>
+          </section>
+
+          <section class="popup-card__section popup-feedback" aria-labelledby="popup-feedback-rating-title">
+            <h3 id="popup-feedback-rating-title" class="popup-card__section-title">Rating</h3>
+            <div id="popup-rating-stars" class="popup-feedback__stars" role="radiogroup" aria-label="Оценка места">
+              <button type="button" class="popup-feedback__star" data-rating="1" role="radio" aria-checked="false" aria-label="Оценка 1 из 5">★</button>
+              <button type="button" class="popup-feedback__star" data-rating="2" role="radio" aria-checked="false" aria-label="Оценка 2 из 5">★</button>
+              <button type="button" class="popup-feedback__star" data-rating="3" role="radio" aria-checked="false" aria-label="Оценка 3 из 5">★</button>
+              <button type="button" class="popup-feedback__star" data-rating="4" role="radio" aria-checked="false" aria-label="Оценка 4 из 5">★</button>
+              <button type="button" class="popup-feedback__star" data-rating="5" role="radio" aria-checked="false" aria-label="Оценка 5 из 5">★</button>
+            </div>
+            <label class="field-label popup-feedback__comment-label" for="popup-review-comment">Комментарий</label>
+            <textarea
+              id="popup-review-comment"
+              class="popup-feedback__comment"
+              rows="3"
+              maxlength="280"
+              placeholder="Короткий отзыв о месте"
+            ></textarea>
+            <button
+              id="popup-review-save"
+              type="button"
+              class="app-btn app-btn--primary popup-feedback__save"
+            >
+              Save
+            </button>
+            <p
+              id="popup-feedback-auth-hint"
+              class="popup-feedback__auth-hint"
+              hidden
+              aria-live="polite"
+            >
+              Sign in to leave review.
+            </p>
+          </section>
+
+          <section class="popup-card__section popup-community" aria-labelledby="popup-community-title">
+            <h3 id="popup-community-title" class="popup-card__section-title">Community rating</h3>
+            <div class="popup-community__summary">
+              <p id="popup-community-average" class="popup-community__average">—</p>
+              <p id="popup-community-count" class="popup-community__count">0 reviews</p>
+            </div>
+            <ul id="popup-community-reviews" class="popup-community__list"></ul>
+          </section>
+
+          <footer class="popup-card__footer">
+            <p class="popup-card__sources-line">
+              <span class="popup-card__sources-label">Data:</span>
+              <span id="popup-sources" class="popup-card__sources"></span>
+              <button
+                id="popup-sources-info"
+                type="button"
+                class="popup-card__sources-info"
+                aria-label="Информация о точности источников данных"
+                title="Данные могут быть неточными, сверяйте с официальными источниками."
+              >
+                i
+              </button>
+            </p>
+            <p id="popup-updated" class="popup-card__updated">Обновление: —</p>
+            <p id="popup-link-row" class="popup-card__link-row" hidden>
+              <a
+                id="popup-link"
+                class="popup-card__link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              ></a>
+            </p>
+          </footer>
+        </div>
+
+        <div id="popup-loading" class="popup-card__state popup-card__state--loading" hidden>
+          <span class="popup-skeleton popup-skeleton--media" aria-hidden="true"></span>
+          <span class="popup-skeleton popup-skeleton--title" aria-hidden="true"></span>
+          <span class="popup-skeleton popup-skeleton--chips" aria-hidden="true"></span>
+          <span class="popup-skeleton popup-skeleton--text" aria-hidden="true"></span>
+          <span class="popup-skeleton popup-skeleton--text popup-skeleton--text-short" aria-hidden="true"></span>
+        </div>
+
+        <div id="popup-error" class="popup-card__state popup-card__state--error" hidden>
+          <p id="popup-error-message" class="popup-card__error-message">
+            Не удалось загрузить данные.
+          </p>
+          <button id="popup-retry" type="button" class="app-btn app-btn--primary popup-card__retry">
+            Повторить
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div id="onboarding-overlay" class="onboarding-overlay" hidden>
+      <div class="onboarding-overlay__scrim" aria-hidden="true"></div>
+      <section
+        id="onboarding-panel"
+        class="onboarding-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="onboarding-title"
+        aria-describedby="onboarding-text"
+      >
+        <p id="onboarding-step" class="onboarding-panel__step">Шаг 1 из 3</p>
+        <h2 id="onboarding-title" class="onboarding-panel__title">Быстрый старт</h2>
+        <p id="onboarding-text" class="onboarding-panel__text">
+          Небольшой тур по интерфейсу: займёт около 20 секунд.
+        </p>
+
+        <div class="onboarding-panel__actions">
+          <button
+            id="onboarding-next"
+            type="button"
+            class="app-btn app-btn--primary onboarding-panel__btn onboarding-panel__btn--next"
+          >
+            Далее
+          </button>
+          <button
+            id="onboarding-skip"
+            type="button"
+            class="app-btn app-btn--ghost onboarding-panel__btn"
+          >
+            Пропустить
+          </button>
+        </div>
+
+        <label class="onboarding-panel__checkbox-row" for="onboarding-never">
+          <input
+            id="onboarding-never"
+            class="onboarding-panel__checkbox"
+            type="checkbox"
+            checked
+          />
+          <span>Не показывать снова</span>
+        </label>
+      </section>
+    </div>
+
+    <div
+      id="user-banned-overlay"
+      class="user-banned-overlay"
+      role="alert"
+      aria-live="assertive"
+      hidden
+    >
+      <div class="user-banned-overlay__scrim" aria-hidden="true"></div>
+      <section
+        class="user-banned-overlay__panel"
+        aria-labelledby="user-banned-title"
+        aria-describedby="user-banned-message"
+      >
+        <h2 id="user-banned-title" class="user-banned-overlay__title">Вы забанены</h2>
+        <p id="user-banned-message" class="user-banned-overlay__message"></p>
+      </section>
+    </div>
+
+    <noscript>Для работы приложения требуется включённый JavaScript.</noscript>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="./js/modules/ui-state-store.js?v=20260214a" defer></script>
+    <script src="./boot-app.js?v=20260425d" defer></script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+# Dependencies and package-manager caches
+node_modules/
+.npm/
+.pnpm-store/
+
+# Environment and private credentials
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+*.pem
+*.key
+*.p12
+
+# Local Cloudflare/Wrangler state and temporary deployment output
+.wrangler/
+.tmp-cf-pages-config/
+deploy/
+cf-www-redirect/.wrangler/
+
+# Runtime data, logs, and process markers
+*.log
+*.pid
+logs/
+tmp/
+.tmp-*
+server-local.*
+server.stdout.log
+server.stderr.log
+wrangler-*.log
+
+# Test, audit, and performance artifacts
+coverage/
+asset_artifacts/
+ASSET_*.md
+perf_artifacts/
+perf_artifacts_render/
+PERF_*.md
+RENDER_*.md
+perf-notes.md
+perf.js
+smart-filters.md
+docs/frontend-backend-audit.md
+tmp_*
+tmp-*
+
+# Local tooling, editor state, and internal agent material
+.codex/
+.tools/
+.vscode/
+.idea/
+cf-www-redirect/
+
+# One-off local audit helpers
+scripts/audit-runtime.mjs
+scripts/capture-har.mjs
+scripts/capture-render-perf.mjs
+scripts/capture-tap-zoom-trace.mjs
+scripts/analyze-tap-zoom-trace.mjs
+
+# Stale local copies retained for rollback only
+supabase-bridge.js
+supabase-bridge-20260412c.js
+
+# Database exports and local caches
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.bak
+cache/
+
+# Generated from data/places.json by npm run sync:places
+places.json

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Access Restricted</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+    <link rel="stylesheet" href="/banned-page.css?v=20260410g" />
+  </head>
+  <body>
+    <main class="banned-shell">
+      <section class="banned-card" aria-live="polite">
+        <div class="banned-eyebrow">World Atlas Pro</div>
+        <h1 class="banned-title">Access restricted</h1>
+        <p id="banned-lead" class="banned-lead">
+          Checking your current access status...
+        </p>
+
+        <dl class="banned-meta">
+          <div class="banned-meta__row">
+            <dt>Status</dt>
+            <dd id="banned-status">Loading</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Source</dt>
+            <dd id="banned-source">-</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Reason</dt>
+            <dd id="banned-reason">-</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Ends</dt>
+            <dd id="banned-until">-</dd>
+          </div>
+        </dl>
+
+        <p id="banned-note" class="banned-note">
+          If the restriction is temporary, access will return automatically when it expires.
+        </p>
+
+        <div class="banned-actions">
+          <button id="banned-refresh" type="button" class="banned-btn banned-btn--primary">
+            Check again
+          </button>
+          <a href="/" class="banned-btn banned-btn--ghost">Back home</a>
+        </div>
+      </section>
+    </main>
+    <script src="/banned-page.js?v=20260410g" defer></script>
+  </body>
+</html>

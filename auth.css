@@ -1,0 +1,202 @@
+.glass-card {
+  border: 1px solid rgba(166, 187, 210, 0.24);
+  border-radius: 14px;
+  background:
+    linear-gradient(155deg, rgba(24, 41, 58, 0.62), rgba(12, 24, 36, 0.74)),
+    rgba(10, 20, 31, 0.52);
+  backdrop-filter: var(--blur-2);
+  -webkit-backdrop-filter: var(--blur-2);
+  box-shadow:
+    0 24px 56px rgba(2, 10, 25, 0.46),
+    inset 0 1px 0 rgba(230, 241, 252, 0.08);
+}
+
+.glass-input {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid rgba(153, 176, 199, 0.34);
+  border-radius: 11px;
+  padding: 0.5rem 0.62rem;
+  background: rgba(6, 17, 33, 0.56);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.glass-input::placeholder {
+  color: rgba(161, 183, 205, 0.82);
+}
+
+.glass-input:focus-visible {
+  outline: none;
+  border-color: rgba(114, 203, 188, 0.7);
+  box-shadow: var(--focus-ring);
+}
+
+.glass-btn {
+  min-height: 36px;
+  border: 1px solid rgba(150, 173, 196, 0.3);
+  border-radius: 10px;
+  padding: 0.4rem 0.74rem;
+  background: rgba(11, 22, 33, 0.52);
+  color: #d8e4f1;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.glass-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(114, 203, 188, 0.64);
+  box-shadow: var(--elev-1);
+}
+
+.glass-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.glass-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.glass-btn-primary {
+  border-color: rgba(114, 203, 188, 0.45);
+  background: linear-gradient(135deg, rgba(80, 150, 141, 0.9), rgba(92, 186, 170, 0.86));
+  color: #f2f8f6;
+}
+
+.glass-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(87, 161, 151, 0.94), rgba(101, 194, 178, 0.92));
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.9rem;
+  min-height: 0.9rem;
+  padding: 0 0.24rem;
+  border-radius: 999px;
+  background: rgba(114, 203, 188, 0.24);
+  border: 1px solid rgba(114, 203, 188, 0.58);
+  color: #c8f2ea;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.auth-panel {
+  position: fixed;
+  top: calc(1rem + var(--toolbar-height) + 0.44rem);
+  right: max(1rem, calc((100vw - var(--toolbar-width)) / 2));
+  z-index: calc(var(--z-toolbar) + 8);
+  width: min(360px, calc(100vw - 2rem));
+  padding: 0.78rem;
+  display: grid;
+  gap: 0.64rem;
+  opacity: 0;
+  transform: translate3d(0, calc(-1 * var(--motion-ui-offset-y)), 0) scale(var(--motion-ui-scale-start));
+  transition:
+    opacity var(--motion-ui-duration) var(--motion-ui-ease),
+    transform var(--motion-ui-duration) var(--motion-ui-ease);
+}
+
+.auth-panel.is-open {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.auth-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.auth-panel__title {
+  margin: 0;
+  color: #eaf2fa;
+  font-family: var(--font-display);
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.auth-panel__close {
+  width: 1.96rem;
+  height: 1.96rem;
+  font-size: 0.84rem;
+}
+
+.auth-panel__user-line {
+  margin: 0;
+  color: #b8cade;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.auth-panel__message {
+  margin: 0;
+  border: 1px solid rgba(145, 169, 194, 0.28);
+  border-radius: 10px;
+  padding: 0.46rem 0.56rem;
+  font-size: 0.74rem;
+  line-height: 1.36;
+  background: rgba(10, 21, 33, 0.42);
+  color: #c7d8ea;
+}
+
+.auth-panel__message.is-error {
+  border-color: rgba(213, 136, 154, 0.54);
+  color: #f0c6d2;
+}
+
+.auth-panel__message.is-success {
+  border-color: rgba(114, 203, 188, 0.56);
+  color: #c7f0e9;
+}
+
+.auth-panel__form {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.auth-panel__actions {
+  margin-top: 0.24rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.44rem;
+}
+
+.auth-panel__resend {
+  margin-top: 0.26rem;
+}
+
+.auth-panel__logout {
+  margin-top: 0.26rem;
+}
+
+.auth-panel .field-label {
+  margin-bottom: 0.2rem;
+}
+
+@media (max-width: 580px) {
+  .auth-panel {
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    top: calc(0.5rem + var(--toolbar-height) + 0.4rem);
+    padding: 0.66rem;
+  }
+}

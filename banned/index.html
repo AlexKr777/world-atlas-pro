@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Access Restricted</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap&subset=cyrillic"
+    />
+    <link rel="stylesheet" href="/banned/banned.css?v=20260410b" />
+  </head>
+  <body>
+    <main class="banned-shell">
+      <section class="banned-card" aria-live="polite">
+        <div class="banned-eyebrow">World Atlas Pro</div>
+        <h1 class="banned-title">Доступ ограничен</h1>
+        <p id="banned-lead" class="banned-lead">
+          Проверяем текущий статус блокировки...
+        </p>
+
+        <dl class="banned-meta">
+          <div class="banned-meta__row">
+            <dt>Статус</dt>
+            <dd id="banned-status">Loading</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Источник</dt>
+            <dd id="banned-source">-</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Причина</dt>
+            <dd id="banned-reason">-</dd>
+          </div>
+          <div class="banned-meta__row">
+            <dt>Окончание</dt>
+            <dd id="banned-until">-</dd>
+          </div>
+        </dl>
+
+        <p id="banned-note" class="banned-note">
+          Если бан временный, доступ вернется автоматически после окончания срока.
+        </p>
+
+        <div class="banned-actions">
+          <button id="banned-refresh" type="button" class="banned-btn banned-btn--primary">
+            Проверить снова
+          </button>
+          <a href="/" class="banned-btn banned-btn--ghost">На главную</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="/banned/banned.js?v=20260410b" defer></script>
+  </body>
+</html>

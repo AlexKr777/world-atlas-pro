@@ -1,0 +1,22 @@
+{
+  "name": "world-atlas-pro",
+  "version": "1.0.0",
+  "description": "Interactive world-map web application with local Express APIs and Supabase integration.",
+  "main": "server.js",
+  "scripts": {
+    "sync:places": "node -e \"const fs=require('fs');fs.copyFileSync('data/places.json','places.json');\"",
+    "fix:places-encoding": "node scripts/fix-encoding.js",
+    "prestart": "npm run sync:places",
+    "start": "node server.js",
+    "dev": "npm run sync:places && node server.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "lighthouse": "^13.0.3",
+    "playwright-core": "^1.58.2",
+    "svgo": "^4.0.0"
+  }
+}
