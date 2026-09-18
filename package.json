@@ -8,7 +8,9 @@
     "fix:places-encoding": "node scripts/fix-encoding.js",
     "prestart": "npm run sync:places",
     "start": "node server.js",
-    "dev": "npm run sync:places && node server.js"
+    "dev": "npm run sync:places && node server.js",
+    "check": "node --check server.js",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "compression": "^1.8.1",
