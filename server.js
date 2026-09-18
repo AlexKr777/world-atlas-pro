@@ -125,21 +125,23 @@ const routeSegmentCache = new Map();
 const weatherCache = new Map();
 const localPresenceCache = new Map();
 
-start().catch((error) => {
-  console.error("[startup] fatal", error);
-  process.exit(1);
-});
-
-async function start() {
+async function start(port = PORT) {
   placesCache = await readPlacesFromDisk();
 
   registerApiRoutes();
   registerStaticRoutes();
   registerNotFoundAndErrorHandlers();
 
-  app.listen(PORT, () => {
-    console.log(`[server] listening on http://localhost:${PORT}`);
+  return app.listen(port, () => {
+    console.log(`[server] listening on http://localhost:${port}`);
     console.log(`[server] places loaded: ${placesCache.length}`);
+  });
+}
+
+if (require.main === module) {
+  start().catch((error) => {
+    console.error("[startup] fatal", error);
+    process.exit(1);
   });
 }
 
@@ -2026,3 +2028,5 @@ function requestLogger(req, res, next) {
 
   next();
 }
+
+module.exports = { app, start, parsePort };
