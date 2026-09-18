@@ -17,6 +17,6 @@
   "devDependencies": {
     "lighthouse": "^13.0.3",
     "playwright-core": "^1.58.2",
-    "svgo": "^4.0.0"
+    "svgo": "^4.1.0"
   }
 }
