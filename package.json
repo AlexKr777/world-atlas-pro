@@ -11,7 +11,7 @@
     "dev": "npm run sync:places && node server.js"
   },
   "dependencies": {
-    "compression": "^1.8.1",
+    "compression": "^1.8.2",
     "express": "^4.21.2"
   },
   "devDependencies": {
